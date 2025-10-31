@@ -13,7 +13,7 @@ struct ContentView: View {
             Color(.systemBackground)
                 .ignoresSafeArea()
 
-            VStack {
+            VStack(spacing: 0) {
                 TopBar()
                     .padding(.horizontal, 20)
                     .padding(.top, 12)
@@ -26,13 +26,10 @@ struct ContentView: View {
                     .multilineTextAlignment(.center)
 
                 Spacer()
-            }
-            
-            VStack {
-                Spacer()
+                
                 BottomBar()
+                    .ignoresSafeArea(.container, edges: .bottom)
             }
-            .ignoresSafeArea(edges: .bottom)
         }
     }
 }
@@ -79,11 +76,28 @@ private struct ProfileAvatar: View {
 }
 
 private struct BottomBar: View {
+    @State private var inputText: String = ""
+    @FocusState private var isInputFocused: Bool
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("问问 Gemini")
-                .font(.footnote)
-                .foregroundStyle(.secondary)
+            ZStack(alignment: .topLeading) {
+                if inputText.isEmpty {
+                    Text("connect any model, chat anywhere")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .padding(.top, 8)
+                        .padding(.leading, 4)
+                }
+                
+                TextEditor(text: $inputText)
+                    .font(.footnote)
+                    .foregroundStyle(.primary)
+                    .focused($isInputFocused)
+                    .scrollContentBackground(.hidden)
+                    .background(Color.clear)
+                    .frame(minHeight: 20, maxHeight: 100)
+            }
 
             HStack(spacing: 14) {
                 RoundIcon(systemName: "plus")
@@ -96,16 +110,20 @@ private struct BottomBar: View {
                 RoundButton(systemName: "sparkles")
             }
         }
-        .padding(.top, 18)
+        .padding(.top, 28)
         .padding(.horizontal, 20)
-        .padding(.bottom, 32)
+        .padding(.bottom, 10)
         .background(
-            UnevenRoundedRectangle(cornerRadii: .init(
-                topLeading: 32,
-                topTrailing: 32
-            ), style: .continuous)
-                .fill(Color(.systemBackground))
-                .shadow(color: Color(.sRGBLinear, white: 0, opacity: 0.12), radius: 16, x: 0, y: 8)
+            GeometryReader { geometry in
+                UnevenRoundedRectangle(cornerRadii: .init(
+                    topLeading: 32,
+                    topTrailing: 32
+                ), style: .continuous)
+                    .fill(Color(.systemBackground))
+                    .shadow(color: Color(.sRGBLinear, white: 0, opacity: 0.12), radius: 16, x: 0, y: 8)
+                    .frame(height: geometry.size.height + geometry.safeAreaInsets.bottom)
+                    .offset(y: 0)
+            }
         )
     }
 }
