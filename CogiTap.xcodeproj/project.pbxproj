@@ -1,0 +1,563 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXContainerItemProxy section */
+		CF4EBAD82EB519620068A9F2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CF4EBAC02EB519600068A9F2 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CF4EBAC72EB519600068A9F2;
+			remoteInfo = CogiTap;
+		};
+		CF4EBAE22EB519620068A9F2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CF4EBAC02EB519600068A9F2 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CF4EBAC72EB519600068A9F2;
+			remoteInfo = CogiTap;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		CF4EBAC82EB519600068A9F2 /* CogiTap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CogiTap.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF4EBAD72EB519620068A9F2 /* CogiTapTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CogiTapTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF4EBAE12EB519620068A9F2 /* CogiTapUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CogiTapUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		CF4EBACA2EB519600068A9F2 /* CogiTap */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = CogiTap;
+			sourceTree = "<group>";
+		};
+		CF4EBADA2EB519620068A9F2 /* CogiTapTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = CogiTapTests;
+			sourceTree = "<group>";
+		};
+		CF4EBAE42EB519620068A9F2 /* CogiTapUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = CogiTapUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		CF4EBAC52EB519600068A9F2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CF4EBAD42EB519620068A9F2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CF4EBADE2EB519620068A9F2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		CF4EBABF2EB519600068A9F2 = {
+			isa = PBXGroup;
+			children = (
+				CF4EBACA2EB519600068A9F2 /* CogiTap */,
+				CF4EBADA2EB519620068A9F2 /* CogiTapTests */,
+				CF4EBAE42EB519620068A9F2 /* CogiTapUITests */,
+				CF4EBAC92EB519600068A9F2 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		CF4EBAC92EB519600068A9F2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CF4EBAC82EB519600068A9F2 /* CogiTap.app */,
+				CF4EBAD72EB519620068A9F2 /* CogiTapTests.xctest */,
+				CF4EBAE12EB519620068A9F2 /* CogiTapUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		CF4EBAC72EB519600068A9F2 /* CogiTap */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CF4EBAEB2EB519620068A9F2 /* Build configuration list for PBXNativeTarget "CogiTap" */;
+			buildPhases = (
+				CF4EBAC42EB519600068A9F2 /* Sources */,
+				CF4EBAC52EB519600068A9F2 /* Frameworks */,
+				CF4EBAC62EB519600068A9F2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				CF4EBACA2EB519600068A9F2 /* CogiTap */,
+			);
+			name = CogiTap;
+			packageProductDependencies = (
+			);
+			productName = CogiTap;
+			productReference = CF4EBAC82EB519600068A9F2 /* CogiTap.app */;
+			productType = "com.apple.product-type.application";
+		};
+		CF4EBAD62EB519620068A9F2 /* CogiTapTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CF4EBAEE2EB519620068A9F2 /* Build configuration list for PBXNativeTarget "CogiTapTests" */;
+			buildPhases = (
+				CF4EBAD32EB519620068A9F2 /* Sources */,
+				CF4EBAD42EB519620068A9F2 /* Frameworks */,
+				CF4EBAD52EB519620068A9F2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CF4EBAD92EB519620068A9F2 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				CF4EBADA2EB519620068A9F2 /* CogiTapTests */,
+			);
+			name = CogiTapTests;
+			packageProductDependencies = (
+			);
+			productName = CogiTapTests;
+			productReference = CF4EBAD72EB519620068A9F2 /* CogiTapTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		CF4EBAE02EB519620068A9F2 /* CogiTapUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CF4EBAF12EB519620068A9F2 /* Build configuration list for PBXNativeTarget "CogiTapUITests" */;
+			buildPhases = (
+				CF4EBADD2EB519620068A9F2 /* Sources */,
+				CF4EBADE2EB519620068A9F2 /* Frameworks */,
+				CF4EBADF2EB519620068A9F2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CF4EBAE32EB519620068A9F2 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				CF4EBAE42EB519620068A9F2 /* CogiTapUITests */,
+			);
+			name = CogiTapUITests;
+			packageProductDependencies = (
+			);
+			productName = CogiTapUITests;
+			productReference = CF4EBAE12EB519620068A9F2 /* CogiTapUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CF4EBAC02EB519600068A9F2 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1640;
+				LastUpgradeCheck = 1640;
+				TargetAttributes = {
+					CF4EBAC72EB519600068A9F2 = {
+						CreatedOnToolsVersion = 16.4;
+					};
+					CF4EBAD62EB519620068A9F2 = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = CF4EBAC72EB519600068A9F2;
+					};
+					CF4EBAE02EB519620068A9F2 = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = CF4EBAC72EB519600068A9F2;
+					};
+				};
+			};
+			buildConfigurationList = CF4EBAC32EB519600068A9F2 /* Build configuration list for PBXProject "CogiTap" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = CF4EBABF2EB519600068A9F2;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = CF4EBAC92EB519600068A9F2 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				CF4EBAC72EB519600068A9F2 /* CogiTap */,
+				CF4EBAD62EB519620068A9F2 /* CogiTapTests */,
+				CF4EBAE02EB519620068A9F2 /* CogiTapUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		CF4EBAC62EB519600068A9F2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CF4EBAD52EB519620068A9F2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CF4EBADF2EB519620068A9F2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		CF4EBAC42EB519600068A9F2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CF4EBAD32EB519620068A9F2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CF4EBADD2EB519620068A9F2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		CF4EBAD92EB519620068A9F2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CF4EBAC72EB519600068A9F2 /* CogiTap */;
+			targetProxy = CF4EBAD82EB519620068A9F2 /* PBXContainerItemProxy */;
+		};
+		CF4EBAE32EB519620068A9F2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CF4EBAC72EB519600068A9F2 /* CogiTap */;
+			targetProxy = CF4EBAE22EB519620068A9F2 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		CF4EBAE92EB519620068A9F2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = ZJD3M39YHC;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		CF4EBAEA2EB519620068A9F2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = ZJD3M39YHC;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		CF4EBAEC2EB519620068A9F2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = ZJD3M39YHC;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.newton.CogiTap;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		CF4EBAED2EB519620068A9F2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = ZJD3M39YHC;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.newton.CogiTap;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		CF4EBAEF2EB519620068A9F2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = ZJD3M39YHC;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.newton.CogiTapTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CogiTap.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CogiTap";
+			};
+			name = Debug;
+		};
+		CF4EBAF02EB519620068A9F2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = ZJD3M39YHC;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.newton.CogiTapTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CogiTap.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CogiTap";
+			};
+			name = Release;
+		};
+		CF4EBAF22EB519620068A9F2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = ZJD3M39YHC;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.newton.CogiTapUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = CogiTap;
+			};
+			name = Debug;
+		};
+		CF4EBAF32EB519620068A9F2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = ZJD3M39YHC;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.newton.CogiTapUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = CogiTap;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CF4EBAC32EB519600068A9F2 /* Build configuration list for PBXProject "CogiTap" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CF4EBAE92EB519620068A9F2 /* Debug */,
+				CF4EBAEA2EB519620068A9F2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CF4EBAEB2EB519620068A9F2 /* Build configuration list for PBXNativeTarget "CogiTap" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CF4EBAEC2EB519620068A9F2 /* Debug */,
+				CF4EBAED2EB519620068A9F2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CF4EBAEE2EB519620068A9F2 /* Build configuration list for PBXNativeTarget "CogiTapTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CF4EBAEF2EB519620068A9F2 /* Debug */,
+				CF4EBAF02EB519620068A9F2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CF4EBAF12EB519620068A9F2 /* Build configuration list for PBXNativeTarget "CogiTapUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CF4EBAF22EB519620068A9F2 /* Debug */,
+				CF4EBAF32EB519620068A9F2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = CF4EBAC02EB519600068A9F2 /* Project object */;
+}
