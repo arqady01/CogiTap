@@ -37,21 +37,21 @@ struct ContentView: View {
 
 private struct TopBar: View {
     var body: some View {
-        HStack {
-            Image(systemName: "line.3.horizontal")
-                .font(.system(size: 22, weight: .medium))
-                .foregroundStyle(.secondary)
+        ZStack {
+            HStack {
+                Image(systemName: "line.3.horizontal")
+                    .font(.system(size: 22, weight: .medium))
+                    .foregroundStyle(.secondary)
 
-            Spacer()
+                Spacer()
+
+                ProfileAvatar()
+            }
 
             Text("Gemini")
                 .font(.title3)
                 .fontWeight(.semibold)
                 .foregroundStyle(.primary)
-
-            Spacer()
-
-            ProfileAvatar()
         }
     }
 }
