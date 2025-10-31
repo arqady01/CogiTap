@@ -26,11 +26,13 @@ struct ContentView: View {
                     .multilineTextAlignment(.center)
 
                 Spacer()
-
-                BottomBar()
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 24)
             }
+            
+            VStack {
+                Spacer()
+                BottomBar()
+            }
+            .ignoresSafeArea(edges: .bottom)
         }
     }
 }
@@ -94,10 +96,14 @@ private struct BottomBar: View {
                 RoundButton(systemName: "sparkles")
             }
         }
-        .padding(.vertical, 18)
+        .padding(.top, 18)
         .padding(.horizontal, 20)
+        .padding(.bottom, 32)
         .background(
-            RoundedRectangle(cornerRadius: 32, style: .continuous)
+            UnevenRoundedRectangle(cornerRadii: .init(
+                topLeading: 32,
+                topTrailing: 32
+            ), style: .continuous)
                 .fill(Color(.systemBackground))
                 .shadow(color: Color(.sRGBLinear, white: 0, opacity: 0.12), radius: 16, x: 0, y: 8)
         )
