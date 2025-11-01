@@ -116,7 +116,7 @@ private struct BottomBar: View {
                     .frame(minHeight: 20, maxHeight: 100)
             }
 
-            HStack(spacing: 14) {
+            HStack(spacing: 10) {
                 RoundIcon(systemName: "plus")
                 RoundIcon(systemName: "slider.horizontal.3")
 
@@ -149,14 +149,10 @@ private struct RoundIcon: View {
     var systemName: String
 
     var body: some View {
-        Circle()
-            .fill(Color(.systemGray6))
-            .frame(width: 36, height: 36)
-            .overlay(
-                Image(systemName: systemName)
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundStyle(.primary)
-            )
+        Image(systemName: systemName)
+            .font(.system(size: 18, weight: .medium))
+            .foregroundStyle(.primary)
+            .frame(width: 32, height: 32)
     }
 }
 
@@ -165,12 +161,12 @@ private struct CapsuleButton: View {
 
     var body: some View {
         Text(title)
-            .font(.system(size: 14, weight: .semibold))
-            .padding(.horizontal, 16)
-            .padding(.vertical, 10)
+            .font(.system(size: 13, weight: .semibold))
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
             .background(
                 Capsule(style: .continuous)
-                    .fill(Color(.systemGray6))
+                    .stroke(Color(.systemGray4), lineWidth: 1)
             )
             .foregroundStyle(.primary)
     }
@@ -181,11 +177,11 @@ private struct RoundButton: View {
 
     var body: some View {
         Circle()
-            .fill(Color(.systemGray6))
-            .frame(width: 44, height: 44)
+            .stroke(Color(.systemGray4), lineWidth: 1)
+            .frame(width: 38, height: 38)
             .overlay(
                 Image(systemName: systemName)
-                    .font(.system(size: 18, weight: .semibold))
+                    .font(.system(size: 16, weight: .semibold))
                     .foregroundStyle(.primary)
             )
     }
