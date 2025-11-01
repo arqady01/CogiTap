@@ -8,26 +8,43 @@
 import SwiftUI
 
 struct ContentView: View {
+    @FocusState private var isKeyboardFocused: Bool
+    
     var body: some View {
         ZStack {
             Color(.systemBackground)
                 .ignoresSafeArea()
+                .onTapGesture {
+                    isKeyboardFocused = false
+                }
 
             VStack(spacing: 0) {
                 TopBar()
                     .padding(.horizontal, 20)
                     .padding(.top, 12)
+                    .onTapGesture {
+                        isKeyboardFocused = false
+                    }
 
                 Spacer()
+                    .onTapGesture {
+                        isKeyboardFocused = false
+                    }
 
                 Text("Cogito, ergo sum")
                     .font(.system(size: 42, weight: .semibold))
                     .foregroundStyle(Color(red: 26/255, green: 115/255, blue: 232/255))
                     .multilineTextAlignment(.center)
+                    .onTapGesture {
+                        isKeyboardFocused = false
+                    }
 
                 Spacer()
+                    .onTapGesture {
+                        isKeyboardFocused = false
+                    }
                 
-                BottomBar()
+                BottomBar(isKeyboardFocused: $isKeyboardFocused)
                     .ignoresSafeArea(.container, edges: .bottom)
             }
         }
@@ -77,7 +94,7 @@ private struct ProfileAvatar: View {
 
 private struct BottomBar: View {
     @State private var inputText: String = ""
-    @FocusState private var isInputFocused: Bool
+    @FocusState.Binding var isKeyboardFocused: Bool
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -93,7 +110,7 @@ private struct BottomBar: View {
                 TextEditor(text: $inputText)
                     .font(.footnote)
                     .foregroundStyle(.primary)
-                    .focused($isInputFocused)
+                    .focused($isKeyboardFocused)
                     .scrollContentBackground(.hidden)
                     .background(Color.clear)
                     .frame(minHeight: 20, maxHeight: 100)
