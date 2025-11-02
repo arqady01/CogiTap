@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct MessageBubbleView: View {
-    let message: Message
+    @Bindable var message: Message
     @State private var showReasoningContent = false
     
     var body: some View {

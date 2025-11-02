@@ -22,7 +22,7 @@ class ChatService: ObservableObject {
         model: ChatModel,
         modelContext: ModelContext
     ) async throws {
-        guard let provider = model.provider else {
+        guard model.provider != nil else {
             throw APIAdapterError.networkError("模型未关联到任何服务商")
         }
         
@@ -41,6 +41,29 @@ class ChatService: ObservableObject {
         currentStreamingMessage = assistantMessage
         
         try modelContext.save()
+        
+        try await sendMessageWithExistingMessages(
+            userMessage: userMessage,
+            assistantMessage: assistantMessage,
+            conversation: conversation,
+            model: model,
+            modelContext: modelContext
+        )
+    }
+    
+    // 使用已创建的消息发送请求
+    func sendMessageWithExistingMessages(
+        userMessage: Message,
+        assistantMessage: Message,
+        conversation: Conversation,
+        model: ChatModel,
+        modelContext: ModelContext
+    ) async throws {
+        guard let provider = model.provider else {
+            throw NSError(domain: "ChatService", code: -1, userInfo: [NSLocalizedDescriptionKey: "模型没有关联的服务商"])
+        }
+        
+        currentStreamingMessage = assistantMessage
         
         // 准备消息历史
         var messages: [UnifiedMessage] = []
@@ -124,15 +147,22 @@ class ChatService: ObservableObject {
                 
                 if let content = chunk.content {
                     contentBuffer += content
-                    message.content = contentBuffer
+                    await MainActor.run {
+                        message.content = contentBuffer
+                    }
                 }
                 
                 if let reasoning = chunk.reasoningContent {
                     reasoningBuffer += reasoning
-                    message.reasoningContent = reasoningBuffer
+                    await MainActor.run {
+                        message.reasoningContent = reasoningBuffer
+                    }
                 }
                 
-                try modelContext.save()
+                // 在主线程保存，确保UI更新
+                await MainActor.run {
+                    try? modelContext.save()
+                }
             }
         }
         

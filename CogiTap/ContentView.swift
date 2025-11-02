@@ -128,20 +128,42 @@ struct ContentView: View {
         inputText = ""
         isKeyboardFocused = false
         
+        // 立即创建用户消息并显示
+        let userMessage = Message(role: .user, content: messageContent, conversation: conversation)
+        modelContext.insert(userMessage)
+        
+        // 立即创建助手消息（空内容，用于流式输出）
+        let assistantMessage = Message(
+            role: .assistant,
+            content: "",
+            isStreaming: true,
+            conversation: conversation
+        )
+        modelContext.insert(assistantMessage)
+        
+        // 立即保存，触发UI更新
+        try? modelContext.save()
+        
+        // 更新会话时间
+        conversation.updatedAt = Date()
+        try? modelContext.save()
+        
+        // 异步发送请求
         Task {
             do {
-                try await chatService.sendMessage(
-                    content: messageContent,
+                try await chatService.sendMessageWithExistingMessages(
+                    userMessage: userMessage,
+                    assistantMessage: assistantMessage,
                     conversation: conversation,
                     model: model,
                     modelContext: modelContext
                 )
-                
-                // 更新会话时间
-                conversation.updatedAt = Date()
-                try? modelContext.save()
             } catch {
                 print("发送消息失败: \(error)")
+                // 如果失败，更新助手消息显示错误
+                assistantMessage.content = "错误: \(error.localizedDescription)"
+                assistantMessage.isStreaming = false
+                try? modelContext.save()
             }
         }
     }
@@ -220,22 +242,50 @@ struct EmptyStateView: View {
 }
 
 struct MessageListView: View {
-    @Bindable var conversation: Conversation
-    
+    @Query private var messages: [Message]
+
+    init(conversation: Conversation) {
+        let id = conversation.id
+        _messages = Query(
+            filter: #Predicate<Message> { message in
+                message.conversation?.id == id
+            },
+            sort: [SortDescriptor(\Message.createdAt, order: .forward)]
+        )
+    }
+
     var body: some View {
         ScrollViewReader { proxy in
             ScrollView {
                 LazyVStack(spacing: 16) {
-                    ForEach(conversation.sortedMessages) { message in
+                    ForEach(messages) { message in
                         MessageBubbleView(message: message)
                             .id(message.id)
                     }
                 }
                 .padding(.vertical)
             }
-            .onChange(of: conversation.sortedMessages.count) { _, _ in
-                if let lastMessage = conversation.sortedMessages.last {
-                    withAnimation {
+            .onChange(of: messages.count) { oldValue, newValue in
+                // 当消息数量变化时，立即滚动到底部
+                print("消息数量变化: \(oldValue) -> \(newValue)")
+                if let lastMessage = messages.last {
+                    DispatchQueue.main.async {
+                        withAnimation(.easeOut(duration: 0.3)) {
+                            proxy.scrollTo(lastMessage.id, anchor: .bottom)
+                        }
+                    }
+                }
+            }
+            .onChange(of: messages.last?.content) { oldValue, newValue in
+                // 当最后一条消息内容变化时（流式更新），也滚动到底部
+                if let lastMessage = messages.last, let content = newValue, !content.isEmpty {
+                    proxy.scrollTo(lastMessage.id, anchor: .bottom)
+                }
+            }
+            .onAppear {
+                // 初始加载时滚动到底部
+                if let lastMessage = messages.last {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                         proxy.scrollTo(lastMessage.id, anchor: .bottom)
                     }
                 }

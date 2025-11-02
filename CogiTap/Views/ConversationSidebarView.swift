@@ -34,7 +34,7 @@ struct ConversationSidebarView: View {
                 Button {
                     createNewConversation()
                 } label: {
-                    Image(systemName: "square.and.pencil")
+                    Image(systemName: "externaldrive.badge.plus")
                         .font(.title3)
                         .foregroundStyle(.blue)
                 }
@@ -181,7 +181,7 @@ struct ConversationRow: View {
                 Button {
                     showingActions = true
                 } label: {
-                    Image(systemName: "ellipsis")
+                    Image(systemName: "square.and.pencil")
                         .foregroundStyle(.secondary)
                 }
                 .buttonStyle(.plain)
