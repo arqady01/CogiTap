@@ -20,6 +20,7 @@ struct ConversationSidebarView: View {
     @State private var conversationToDelete: Conversation?
     @State private var editingConversation: Conversation?
     @State private var newTitle = ""
+    @State private var conversationForSettings: Conversation?
     
     var body: some View {
         VStack(spacing: 0) {
@@ -67,6 +68,9 @@ struct ConversationSidebarView: View {
                             onDelete: {
                                 conversationToDelete = conversation
                                 showingDeleteAlert = true
+                            },
+                            onSettings: {
+                                conversationForSettings = conversation
                             }
                         )
                     }
@@ -130,12 +134,19 @@ struct ConversationSidebarView: View {
                 editingConversation = nil
             }
         }
+        .sheet(item: $conversationForSettings) { conversation in
+            ConversationSettingsView(conversation: conversation)
+                .environment(\.modelContext, modelContext)
+        }
     }
     
     private func deleteConversation(_ conversation: Conversation) {
         modelContext.delete(conversation)
         if selectedConversation?.id == conversation.id {
             selectedConversation = nil
+        }
+        if conversationForSettings?.id == conversation.id {
+            conversationForSettings = nil
         }
     }
     
@@ -154,6 +165,7 @@ struct ConversationRow: View {
     let onTap: () -> Void
     let onEdit: () -> Void
     let onDelete: () -> Void
+    let onSettings: () -> Void
     
     @State private var showingActions = false
     
@@ -194,6 +206,9 @@ struct ConversationRow: View {
         }
         .buttonStyle(.plain)
         .confirmationDialog("对话操作", isPresented: $showingActions) {
+            Button("设置") {
+                onSettings()
+            }
             Button("重命名") {
                 onEdit()
             }

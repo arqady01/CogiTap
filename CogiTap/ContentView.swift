@@ -20,7 +20,7 @@ struct ContentView: View {
     @State private var showSidebar = false
     @State private var showSettings = false
     @State private var showModelSelector = false
-    @State private var showConversationSettings = false
+    @State private var conversationSettingsTarget: Conversation?
     @State private var inputText = ""
     @FocusState private var isKeyboardFocused: Bool
     
@@ -54,9 +54,9 @@ struct ContentView: View {
                     onSend: sendMessage,
                     onStopGeneration: { chatService.stopGeneration() },
                     onModelTap: { showModelSelector = true },
-                    onSettingsTap: { 
-                        if currentConversation != nil {
-                            showConversationSettings = true
+                    onSettingsTap: {
+                        if let conversation = currentConversation {
+                            conversationSettingsTarget = conversation
                         }
                     }
                 )
@@ -89,10 +89,8 @@ struct ContentView: View {
         .sheet(isPresented: $showModelSelector) {
             ModelSelectorView(selectedModel: $selectedModel)
         }
-        .sheet(isPresented: $showConversationSettings) {
-            if let conversation = currentConversation {
-                ConversationSettingsView(conversation: conversation)
-            }
+        .sheet(item: $conversationSettingsTarget) { conversation in
+            ConversationSettingsView(conversation: conversation)
         }
         .onAppear {
             initializeApp()

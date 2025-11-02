@@ -6,10 +6,16 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ConversationSettingsView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
     @Bindable var conversation: Conversation
+    
+    @State private var localTemperature: Double = 0.7
+    @State private var localSystemPrompt: String = "You are a helpful assistant."
+    @State private var isInitialized = false
     
     var body: some View {
         NavigationStack {
@@ -19,11 +25,14 @@ struct ConversationSettingsView: View {
                         HStack {
                             Text("Temperature")
                             Spacer()
-                            Text(String(format: "%.1f", conversation.temperature))
+                            Text(String(format: "%.1f", localTemperature))
                                 .foregroundStyle(.secondary)
                         }
                         
-                        Slider(value: $conversation.temperature, in: 0...2, step: 0.1)
+                        Slider(value: $localTemperature, in: 0...2, step: 0.1)
+                            .onChange(of: localTemperature) { _, newValue in
+                                conversation.temperature = newValue
+                            }
                     }
                 } header: {
                     Text("温度")
@@ -32,7 +41,10 @@ struct ConversationSettingsView: View {
                 }
                 
                 Section {
-                    TextEditor(text: $conversation.systemPrompt)
+                    TextEditor(text: $localSystemPrompt)
+                            .onChange(of: localSystemPrompt) { _, newValue in
+                                conversation.systemPrompt = newValue
+                            }
                         .frame(minHeight: 100)
                         .font(.body)
                 } header: {
@@ -43,9 +55,17 @@ struct ConversationSettingsView: View {
             }
             .navigationTitle("对话设置")
             .navigationBarTitleDisplayMode(.inline)
+            .onAppear {
+                if !isInitialized {
+                    localTemperature = conversation.temperature
+                    localSystemPrompt = conversation.systemPrompt
+                    isInitialized = true
+                }
+            }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("完成") {
+                        try? modelContext.save()
                         dismiss()
                     }
                 }
