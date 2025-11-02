@@ -81,10 +81,11 @@ class ChatService: ObservableObject {
         }
         
         // 创建请求
+        let shouldStream = conversation.isStreamingEnabled
         let request = UnifiedChatRequest(
             messages: messages,
             temperature: conversation.temperature,
-            stream: true,
+            stream: shouldStream,
             model: model.modelName
         )
         
@@ -94,17 +95,38 @@ class ChatService: ObservableObject {
         // 发送请求
         isStreaming = true
         
-        streamTask = Task {
-            do {
-                try await streamResponse(adapter: adapter, request: request, message: assistantMessage, modelContext: modelContext)
-            } catch {
-                assistantMessage.content = "错误: \(error.localizedDescription)"
+        if shouldStream {
+            streamTask = Task {
+                do {
+                    try await streamResponse(adapter: adapter, request: request, message: assistantMessage, modelContext: modelContext)
+                } catch {
+                    assistantMessage.content = "错误: \(error.localizedDescription)"
+                    assistantMessage.isStreaming = false
+                    try? modelContext.save()
+                }
+                
+                isStreaming = false
+                currentStreamingMessage = nil
+            }
+        } else {
+            streamTask = Task {
+                do {
+                    let urlRequest = try adapter.convertRequest(request)
+                    let (data, _) = try await URLSession.shared.data(for: urlRequest)
+                    let response = try adapter.parseResponse(data)
+                    
+                    assistantMessage.content = response.content
+                    assistantMessage.reasoningContent = response.reasoningContent
+                } catch {
+                    assistantMessage.content = "错误: \(error.localizedDescription)"
+                }
+                
                 assistantMessage.isStreaming = false
                 try? modelContext.save()
+                
+                isStreaming = false
+                currentStreamingMessage = nil
             }
-            
-            isStreaming = false
-            currentStreamingMessage = nil
         }
     }
     

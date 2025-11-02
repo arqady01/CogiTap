@@ -18,6 +18,7 @@ final class Conversation {
     // 会话级别的参数
     var temperature: Double
     var systemPrompt: String
+    var isStreamingEnabled: Bool
     
     // 当前使用的模型
     var selectedModelId: UUID?
@@ -33,6 +34,7 @@ final class Conversation {
         updatedAt: Date = Date(),
         temperature: Double = 0.7,
         systemPrompt: String = "You are a helpful assistant.",
+        isStreamingEnabled: Bool = true,
         selectedModelId: UUID? = nil
     ) {
         self.id = id
@@ -41,6 +43,7 @@ final class Conversation {
         self.updatedAt = updatedAt
         self.temperature = temperature
         self.systemPrompt = systemPrompt
+        self.isStreamingEnabled = isStreamingEnabled
         self.selectedModelId = selectedModelId
     }
     

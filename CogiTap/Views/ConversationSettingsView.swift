@@ -15,11 +15,21 @@ struct ConversationSettingsView: View {
     
     @State private var localTemperature: Double = 0.7
     @State private var localSystemPrompt: String = "You are a helpful assistant."
+    @State private var localStreamingEnabled: Bool = true
     @State private var isInitialized = false
     
     var body: some View {
         NavigationStack {
             Form {
+                Section {
+                    Toggle("启用流式输出", isOn: $localStreamingEnabled)
+                        .onChange(of: localStreamingEnabled) { _, newValue in
+                            conversation.isStreamingEnabled = newValue
+                        }
+                } footer: {
+                    Text("某些模型不支持流式输出，关闭后将等待完整回复再显示。")
+                }
+                
                 Section {
                     VStack(alignment: .leading, spacing: 8) {
                         HStack {
@@ -59,6 +69,7 @@ struct ConversationSettingsView: View {
                 if !isInitialized {
                     localTemperature = conversation.temperature
                     localSystemPrompt = conversation.systemPrompt
+                    localStreamingEnabled = conversation.isStreamingEnabled
                     isInitialized = true
                 }
             }
