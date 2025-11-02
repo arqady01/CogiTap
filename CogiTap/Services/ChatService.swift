@@ -63,6 +63,10 @@ class ChatService: ObservableObject {
             throw NSError(domain: "ChatService", code: -1, userInfo: [NSLocalizedDescriptionKey: "模型没有关联的服务商"])
         }
         
+        // 确保上一轮流式任务被取消，防止悬挂的请求
+        streamTask?.cancel()
+        streamTask = nil
+        
         currentStreamingMessage = assistantMessage
         
         // 准备消息历史
@@ -73,11 +77,19 @@ class ChatService: ObservableObject {
             messages.append(UnifiedMessage(role: "system", content: conversation.systemPrompt))
         }
         
-        // 添加历史消息
-        for msg in conversation.sortedMessages {
-            if msg.id != assistantMessage.id {
-                messages.append(UnifiedMessage(role: msg.role, content: msg.content))
-            }
+        let historyMessages: [Message]
+        if let loadedMessages = conversation.messages {
+            historyMessages = loadedMessages.sorted { $0.createdAt < $1.createdAt }
+        } else {
+            let fetchDescriptor = FetchDescriptor<Message>(
+                sortBy: [SortDescriptor(\Message.createdAt, order: .forward)]
+            )
+            let fetched = (try? modelContext.fetch(fetchDescriptor)) ?? []
+            historyMessages = fetched.filter { $0.conversation?.id == conversation.id }
+        }
+        
+        for msg in historyMessages where msg.id != assistantMessage.id {
+            messages.append(UnifiedMessage(role: msg.role, content: msg.content))
         }
         
         // 创建请求
@@ -100,13 +112,18 @@ class ChatService: ObservableObject {
                 do {
                     try await streamResponse(adapter: adapter, request: request, message: assistantMessage, modelContext: modelContext)
                 } catch {
-                    assistantMessage.content = "错误: \(error.localizedDescription)"
-                    assistantMessage.isStreaming = false
-                    try? modelContext.save()
+                    await MainActor.run {
+                        assistantMessage.content = "错误: \(error.localizedDescription)"
+                        assistantMessage.isStreaming = false
+                        try? modelContext.save()
+                    }
                 }
                 
-                isStreaming = false
-                currentStreamingMessage = nil
+                await MainActor.run {
+                    isStreaming = false
+                    currentStreamingMessage = nil
+                    streamTask = nil
+                }
             }
         } else {
             streamTask = Task {
@@ -115,17 +132,23 @@ class ChatService: ObservableObject {
                     let (data, _) = try await URLSession.shared.data(for: urlRequest)
                     let response = try adapter.parseResponse(data)
                     
-                    assistantMessage.content = response.content
-                    assistantMessage.reasoningContent = response.reasoningContent
+                    await MainActor.run {
+                        assistantMessage.content = response.content
+                        assistantMessage.reasoningContent = response.reasoningContent
+                    }
                 } catch {
-                    assistantMessage.content = "错误: \(error.localizedDescription)"
+                    await MainActor.run {
+                        assistantMessage.content = "错误: \(error.localizedDescription)"
+                    }
                 }
                 
-                assistantMessage.isStreaming = false
-                try? modelContext.save()
-                
-                isStreaming = false
-                currentStreamingMessage = nil
+                await MainActor.run {
+                    assistantMessage.isStreaming = false
+                    try? modelContext.save()
+                    isStreaming = false
+                    currentStreamingMessage = nil
+                    streamTask = nil
+                }
             }
         }
     }

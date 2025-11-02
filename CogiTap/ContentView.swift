@@ -91,9 +91,15 @@ struct ContentView: View {
         }
         .sheet(item: $conversationSettingsTarget) { conversation in
             ConversationSettingsView(conversation: conversation)
+                .environment(\.modelContext, modelContext)
         }
         .onAppear {
             initializeApp()
+        }
+        .onChange(of: currentConversation?.id) { _, _ in
+            if let target = conversationSettingsTarget, target.id != currentConversation?.id {
+                conversationSettingsTarget = nil
+            }
         }
         .animation(.easeInOut, value: showSidebar)
     }
