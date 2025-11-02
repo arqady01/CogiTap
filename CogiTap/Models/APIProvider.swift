@@ -8,12 +8,29 @@
 import Foundation
 import SwiftData
 
-enum ProviderType: String, Codable {
+enum ProviderType: String, Codable, CaseIterable {
     case openai = "OpenAI"
     case anthropic = "Anthropic"
     case gemini = "Gemini"
     case openrouter = "OpenRouter"
     case custom = "Custom"
+}
+
+extension ProviderType {
+    var displayName: String {
+        switch self {
+        case .openai:
+            return "OpenAI"
+        case .anthropic:
+            return "Anthropic"
+        case .gemini:
+            return "Google Gemini"
+        case .openrouter:
+            return "OpenRouter"
+        case .custom:
+            return "自定义"
+        }
+    }
 }
 
 @Model

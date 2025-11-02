@@ -39,13 +39,6 @@ struct ModelProvidersView: View {
                                 nickname: existingProvider.nickname
                             )
                         }
-                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                            Button(role: .destructive) {
-                                modelContext.delete(existingProvider)
-                            } label: {
-                                Label("删除", systemImage: "trash")
-                            }
-                        }
                     } else {
                         // 未配置的预设服务商
                         Button {
