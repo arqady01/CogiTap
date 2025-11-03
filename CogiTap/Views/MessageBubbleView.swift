@@ -27,38 +27,45 @@ struct MessageBubbleView: View {
                             }
                         } label: {
                             HStack {
-                                Image(systemName: "brain")
-                                    .font(.caption)
-                                Text("思考过程")
-                                    .font(.caption)
-                                    .fontWeight(.medium)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("思维链轨道")
+                                        .font(.caption)
+                                        .fontWeight(.semibold)
+                                    Text(showReasoningContent ? "点击收起推理动画" : "点击展开推理动画")
+                                        .font(.caption2)
+                                        .foregroundStyle(.secondary)
+                                }
+                                
                                 Spacer()
+                                
                                 Image(systemName: showReasoningContent ? "chevron.up" : "chevron.down")
-                                    .font(.caption2)
+                                    .font(.caption2.weight(.medium))
+                                    .foregroundStyle(.secondary)
                             }
-                            .foregroundStyle(.secondary)
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 8)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 11)
                             .background(
-                                RoundedRectangle(cornerRadius: 8)
+                                RoundedRectangle(cornerRadius: 10, style: .continuous)
                                     .fill(Color(.systemGray6))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                            .stroke(Color.primary.opacity(0.06), lineWidth: 1)
+                                    )
                             )
                         }
+                        .buttonStyle(.plain)
                         
                         if showReasoningContent {
-                            Text(reasoning)
-                                .font(.footnote)
-                                .foregroundStyle(.secondary)
-                                .padding(12)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .fill(Color(.systemGray6))
-                                )
+                            ReasoningFlowView(reasoning: reasoning)
+                                .transition(.asymmetric(
+                                    insertion: .move(edge: .top).combined(with: .opacity),
+                                    removal: .opacity
+                                ))
                                 .contextMenu {
                                     Button {
                                         UIPasteboard.general.string = reasoning
                                     } label: {
-                                        Label("复制", systemImage: "doc.on.doc")
+                                        Label("复制思维链", systemImage: "doc.on.doc")
                                     }
                                 }
                         }
