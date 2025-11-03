@@ -143,8 +143,8 @@ struct ProviderDetailView: View {
                 if enabledModels.isEmpty {
                     ContentUnavailableView(
                         "暂无模型",
-                        systemImage: "cube.transparent",
-                        description: Text("点击下方按钮管理或添加模型")
+                        systemImage: "xmark.bin",
+                        description: Text("点击管理按钮或添加模型")
                     )
                 } else {
                     ForEach(enabledModels) { model in
@@ -202,6 +202,7 @@ struct ProviderDetailView: View {
         }
         .navigationTitle(isEditing ? "编辑服务商" : provider.nickname)
         .navigationBarTitleDisplayMode(.large)
+        .navigationBarBackButtonHidden(isEditing)
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
                 if isEditing {

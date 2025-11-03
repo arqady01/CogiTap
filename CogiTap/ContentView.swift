@@ -41,8 +41,16 @@ struct ContentView: View {
                 // 消息列表
                 if let conversation = currentConversation {
                     MessageListView(conversation: conversation)
+                        .contentShape(Rectangle())
+                        .simultaneousGesture(TapGesture().onEnded {
+                            dismissKeyboard()
+                        })
                 } else {
                     EmptyStateView()
+                        .contentShape(Rectangle())
+                        .simultaneousGesture(TapGesture().onEnded {
+                            dismissKeyboard()
+                        })
                 }
                 
                 // 底部输入栏
@@ -102,6 +110,10 @@ struct ContentView: View {
             }
         }
         .animation(.easeInOut, value: showSidebar)
+    }
+    
+    private func dismissKeyboard() {
+        isKeyboardFocused = false
     }
     
     private func initializeApp() {
