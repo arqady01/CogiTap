@@ -127,6 +127,9 @@ struct ReasoningFlowView: View {
     private let steps: [ReasoningStep]
     private let reasoning: String
     
+    @AppStorage(AppearanceStorageKey.reasoningFont)
+    private var reasoningFontName: String = ChatFontSizeOption.default.rawValue
+    
     @State private var revealedSteps = 0
     @State private var scheduledUpToStep = 0
     @State private var animationID = UUID()
@@ -142,6 +145,7 @@ struct ReasoningFlowView: View {
                 ReasoningStepRow(
                     index: index + 1,
                     step: step,
+                    fontOption: reasoningFontOption,
                     isRevealed: index < revealedSteps,
                     isActive: index == revealedSteps - 1
                 )
@@ -155,7 +159,7 @@ struct ReasoningFlowView: View {
             
             if steps.isEmpty {
                 Text(reasoning)
-                    .font(.footnote)
+                    .font(.system(size: reasoningFontOption.reasoningSize))
                     .foregroundStyle(.secondary)
                     .transition(.opacity)
             }
@@ -179,6 +183,10 @@ struct ReasoningFlowView: View {
         }
         .accessibilityElement(children: .contain)
         .accessibilityLabel("思考过程")
+    }
+    
+    private var reasoningFontOption: ChatFontSizeOption {
+        ChatFontSizeOption(rawValue: reasoningFontName) ?? .default
     }
     
     private var backgroundColor: Color {
@@ -251,27 +259,26 @@ struct ReasoningFlowView: View {
 private struct ReasoningStepRow: View {
     let index: Int
     let step: ReasoningStep
+    let fontOption: ChatFontSizeOption
     let isRevealed: Bool
     let isActive: Bool
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Step \(index)")
-                .font(.caption)
-                .fontWeight(.semibold)
+                .font(.system(size: max(fontOption.reasoningSize - 2, 10), weight: .semibold))
                 .foregroundStyle(.secondary)
                 .opacity(isRevealed ? 1.0 : 0.2)
             
             Text(step.headline)
-                .font(.callout)
-                .fontWeight(.medium)
+                .font(.system(size: fontOption.reasoningSize, weight: .medium))
                 .foregroundStyle(.primary)
                 .fixedSize(horizontal: false, vertical: true)
                 .transition(.move(edge: .leading).combined(with: .opacity))
             
             if let detail = step.detail {
                 Text(detail)
-                    .font(.footnote)
+                    .font(.system(size: max(fontOption.reasoningSize - 1, 11)))
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
                     .transition(.opacity)

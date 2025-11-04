@@ -9,6 +9,9 @@ import SwiftUI
 
 enum AppearanceStorageKey {
     static let userBubbleColor = "appearance.userBubbleColor"
+    static let userMessageFont = "appearance.userMessageFont"
+    static let reasoningFont = "appearance.reasoningFont"
+    static let assistantMessageFont = "appearance.assistantMessageFont"
 }
 
 enum ChatBubbleColorOption: String, CaseIterable, Identifiable {
@@ -89,4 +92,51 @@ enum ChatBubbleColorOption: String, CaseIterable, Identifiable {
     }
     
     static var `default`: ChatBubbleColorOption { .blue }
+}
+
+enum ChatFontSizeOption: String, CaseIterable, Identifiable {
+    case xsmall
+    case small
+    case medium
+    case large
+    
+    var id: String { rawValue }
+    
+    var displayName: String {
+        switch self {
+        case .xsmall: return "特小"
+        case .small: return "小"
+        case .medium: return "默认"
+        case .large: return "大"
+        }
+    }
+    
+    var userMessageSize: CGFloat {
+        switch self {
+        case .xsmall: return 14
+        case .small: return 16
+        case .medium: return 17
+        case .large: return 19
+        }
+    }
+    
+    var reasoningSize: CGFloat {
+        switch self {
+        case .xsmall: return 12
+        case .small: return 13
+        case .medium: return 14
+        case .large: return 16
+        }
+    }
+    
+    var assistantMessageSize: CGFloat {
+        switch self {
+        case .xsmall: return 15
+        case .small: return 16
+        case .medium: return 17
+        case .large: return 19
+        }
+    }
+    
+    static var `default`: ChatFontSizeOption { .medium }
 }

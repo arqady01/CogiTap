@@ -319,20 +319,26 @@ struct ChatInputBar: View {
     let onStopGeneration: () -> Void
     let onModelTap: () -> Void
     let onSettingsTap: () -> Void
+    @AppStorage(AppearanceStorageKey.userMessageFont)
+    private var userFontName: String = ChatFontSizeOption.default.rawValue
+    
+    private var userFontOption: ChatFontSizeOption {
+        ChatFontSizeOption(rawValue: userFontName) ?? .default
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             ZStack(alignment: .topLeading) {
                 if inputText.isEmpty {
                     Text("connect any model, chat anywhere")
-                        .font(.footnote)
+                        .font(.system(size: max(userFontOption.userMessageSize - 2, 11)))
                         .foregroundStyle(.secondary)
                         .padding(.top, 8)
                         .padding(.leading, 4)
                 }
                 
                 TextEditor(text: $inputText)
-                    .font(.footnote)
+                    .font(.system(size: userFontOption.userMessageSize))
                     .foregroundStyle(.primary)
                     .focused($isKeyboardFocused)
                     .scrollContentBackground(.hidden)

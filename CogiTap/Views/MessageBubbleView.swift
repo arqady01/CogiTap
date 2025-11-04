@@ -14,9 +14,27 @@ struct MessageBubbleView: View {
     @State private var showReasoningContent = false
     @AppStorage(AppearanceStorageKey.userBubbleColor)
     private var userBubbleColorName: String = ChatBubbleColorOption.default.rawValue
+    @AppStorage(AppearanceStorageKey.userMessageFont)
+    private var userFontName: String = ChatFontSizeOption.default.rawValue
+    @AppStorage(AppearanceStorageKey.assistantMessageFont)
+    private var assistantFontName: String = ChatFontSizeOption.default.rawValue
+    @AppStorage(AppearanceStorageKey.reasoningFont)
+    private var reasoningFontName: String = ChatFontSizeOption.default.rawValue
     
     private var userBubbleOption: ChatBubbleColorOption {
         ChatBubbleColorOption(rawValue: userBubbleColorName) ?? .default
+    }
+    
+    private var userFontOption: ChatFontSizeOption {
+        ChatFontSizeOption(rawValue: userFontName) ?? .default
+    }
+    
+    private var assistantFontOption: ChatFontSizeOption {
+        ChatFontSizeOption(rawValue: assistantFontName) ?? .default
+    }
+    
+    private var reasoningFontOption: ChatFontSizeOption {
+        ChatFontSizeOption(rawValue: reasoningFontName) ?? .default
     }
     
     var body: some View {
@@ -60,11 +78,10 @@ private extension MessageBubbleView {
                     HStack(alignment: .center) {
                         VStack(alignment: .leading, spacing: 2) {
                             Text("思维链轨道")
-                                .font(.caption)
-                                .fontWeight(.semibold)
+                                .font(.system(size: max(reasoningFontOption.reasoningSize - 1, 11), weight: .semibold))
                                 .foregroundStyle(.primary)
                             Text(showReasoningContent ? "点击收起推理动画" : "点击展开推理动画")
-                                .font(.caption2)
+                                .font(.system(size: max(reasoningFontOption.reasoningSize - 2, 10)))
                                 .foregroundStyle(.secondary)
                         }
                         
@@ -88,7 +105,7 @@ private extension MessageBubbleView {
                 .buttonStyle(.plain)
                 
                 if showReasoningContent {
-                    ReasoningFlowView(reasoning: reasoning)
+                   ReasoningFlowView(reasoning: reasoning)
                         .transition(.asymmetric(
                             insertion: .move(edge: .top).combined(with: .opacity),
                             removal: .opacity
@@ -109,10 +126,13 @@ private extension MessageBubbleView {
     private func bubbleContent(alignment: HorizontalAlignment) -> some View {
         VStack(alignment: alignment, spacing: 6) {
             if shouldShowStreamingPlaceholder {
-                StreamingResponsePlaceholder(accentColor: placeholderAccentColor)
+                StreamingResponsePlaceholder(
+                    accentColor: placeholderAccentColor,
+                    height: max(messageFontSize + 10, 22)
+                )
             } else {
                 Text(message.content)
-                    .font(.body)
+                    .font(.system(size: messageFontSize))
                     .foregroundStyle(messageTextColor)
                     .textSelection(.enabled)
                     .multilineTextAlignment(alignment == .trailing ? .trailing : .leading)
@@ -233,10 +253,21 @@ private extension MessageBubbleView {
         let screenWidth = UIScreen.main.bounds.width
         return min(screenWidth * 0.78, 360)
     }
+    
+    private var messageFontSize: CGFloat {
+        switch message.messageRole {
+        case .user:
+            return userFontOption.userMessageSize
+        case .assistant, .system:
+            return assistantFontOption.assistantMessageSize
+        }
+    }
+    
 }
 
 private struct StreamingResponsePlaceholder: View {
     let accentColor: Color
+    let height: CGFloat
     @State private var highlightWidth: CGFloat = 64
     
     var body: some View {
@@ -276,64 +307,86 @@ private struct StreamingResponsePlaceholder: View {
                     highlightWidth = max(64, width * 0.28)
                 }
         }
-        .frame(height: 20)
+        .frame(height: height)
+    }
+}
+
+private struct MessageBubblePreview: View {
+    let container: ModelContainer?
+    let userMessage: Message?
+    let assistantMessage: Message?
+    
+    init() {
+        if let container = try? ModelContainer(
+            for: Conversation.self,
+                Message.self,
+                ChatModel.self,
+                APIProvider.self,
+            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+        ) {
+            self.container = container
+            let context = container.mainContext
+            
+            let provider = APIProvider(
+                nickname: "默认分组",
+                providerType: .openai,
+                baseURL: "https://api.openai.com/v1",
+                apiKey: "preview-key"
+            )
+            let chatModel = ChatModel(
+                modelName: "gpt-4o",
+                displayName: "实验室",
+                isEnabled: true,
+                provider: provider
+            )
+            let conversation = Conversation(
+                title: "Preview",
+                selectedModelId: chatModel.id
+            )
+            let userMessage = Message(
+                role: .user,
+                content: "你好，请帮我解释一下量子计算的基本原理。",
+                conversation: conversation
+            )
+            let assistantMessage = Message(
+                role: .assistant,
+                content: "量子计算是一种利用量子力学原理进行信息处理的计算方式...",
+                reasoningContent: "首先，我需要理解用户想要了解量子计算的哪些方面。考虑到这是一个基础性问题，我应该从最基本的概念开始解释...",
+                conversation: conversation
+            )
+            
+            context.insert(provider)
+            context.insert(chatModel)
+            context.insert(conversation)
+            context.insert(userMessage)
+            context.insert(assistantMessage)
+            
+            self.userMessage = userMessage
+            self.assistantMessage = assistantMessage
+        } else {
+            self.container = nil
+            self.userMessage = nil
+            self.assistantMessage = nil
+        }
+    }
+    
+    var body: some View {
+        if let container,
+           let userMessage,
+           let assistantMessage {
+            VStack(spacing: 16) {
+                MessageBubbleView(message: userMessage)
+                MessageBubbleView(message: assistantMessage)
+            }
+            .padding()
+            .background(Color(.systemBackground))
+            .modelContainer(container)
+        } else {
+            Text("Preview Unavailable")
+        }
     }
 }
 
 #Preview {
-    do {
-        let container = try ModelContainer(
-            for: Conversation.self,
-                 Message.self,
-                 ChatModel.self,
-                 APIProvider.self,
-            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
-        )
-        
-        let context = container.mainContext
-        
-        let provider = APIProvider(
-            nickname: "默认分组",
-            providerType: .openai,
-            baseURL: "https://api.openai.com/v1",
-            apiKey: "preview-key"
-        )
-        let chatModel = ChatModel(
-            modelName: "gpt-4o",
-            displayName: "实验室",
-            isEnabled: true,
-            provider: provider
-        )
-        let conversation = Conversation(
-            title: "Preview",
-            selectedModelId: chatModel.id
-        )
-        let userMessage = Message(
-            role: .user,
-            content: "你好，请帮我解释一下量子计算的基本原理。",
-            conversation: conversation
-        )
-        let assistantMessage = Message(
-            role: .assistant,
-            content: "量子计算是一种利用量子力学原理进行信息处理的计算方式...",
-            reasoningContent: "首先，我需要理解用户想要了解量子计算的哪些方面。考虑到这是一个基础性问题，我应该从最基本的概念开始解释...",
-            conversation: conversation
-        )
-        
-        context.insert(provider)
-        context.insert(chatModel)
-        context.insert(conversation)
-        context.insert(userMessage)
-        context.insert(assistantMessage)
-        
-        return VStack(spacing: 16) {
-            MessageBubbleView(message: userMessage)
-            MessageBubbleView(message: assistantMessage)
-        }
-        .padding()
-        .background(Color(.systemBackground))
-        .modelContainer(container)
-    } catch {
-        return Text("Preview Unavailable")
-    }
+    MessageBubblePreview()
 }
