@@ -7,13 +7,13 @@
 
 import SwiftUI
 import SwiftData
+import UIKit
 
 struct MessageBubbleView: View {
     @Bindable var message: Message
     @State private var showReasoningContent = false
     @AppStorage(AppearanceStorageKey.userBubbleColor)
     private var userBubbleColorName: String = ChatBubbleColorOption.default.rawValue
-    @Query private var chatModels: [ChatModel]
     
     private var userBubbleOption: ChatBubbleColorOption {
         ChatBubbleColorOption(rawValue: userBubbleColorName) ?? .default
@@ -34,7 +34,6 @@ struct MessageBubbleView: View {
 private extension MessageBubbleView {
     var assistantLayout: some View {
         VStack(alignment: .leading, spacing: 12) {
-            assistantModelBadge
             reasoningSection
             bubbleContent(alignment: .leading)
         }
@@ -111,14 +110,12 @@ private extension MessageBubbleView {
         VStack(alignment: alignment, spacing: 6) {
             if shouldShowStreamingPlaceholder {
                 StreamingResponsePlaceholder(accentColor: placeholderAccentColor)
-                    .frame(maxWidth: .infinity, alignment: alignment == .trailing ? .trailing : .leading)
             } else {
                 Text(message.content)
                     .font(.body)
                     .foregroundStyle(messageTextColor)
                     .textSelection(.enabled)
                     .multilineTextAlignment(alignment == .trailing ? .trailing : .leading)
-                    .frame(maxWidth: .infinity, alignment: alignment == .trailing ? .trailing : .leading)
             }
             
             if message.isStreaming,
@@ -137,7 +134,6 @@ private extension MessageBubbleView {
                             )
                     }
                 }
-                .frame(maxWidth: .infinity, alignment: alignment == .trailing ? .trailing : .leading)
                 .padding(.top, 4)
             }
         }
@@ -158,26 +154,7 @@ private extension MessageBubbleView {
                 Label("复制", systemImage: "doc.on.doc")
             }
         }
-    }
-    
-    private var assistantModelBadge: some View {
-        let label = assistantModelLabel ?? "智能助手"
-        return Text(label)
-            .font(.caption)
-            .fontWeight(.semibold)
-            .lineLimit(1)
-            .minimumScaleFactor(0.75)
-            .padding(.horizontal, 14)
-            .padding(.vertical, 8)
-            .background(
-                Capsule(style: .continuous)
-                    .fill(Color.blue.opacity(0.12))
-            )
-            .overlay(
-                Capsule(style: .continuous)
-                    .stroke(Color.blue.opacity(0.2), lineWidth: 1)
-            )
-            .foregroundStyle(Color.blue)
+        .frame(maxWidth: bubbleMaxWidth, alignment: alignment == .trailing ? .trailing : .leading)
     }
     
     private var messageBubbleFillColor: Color {
@@ -236,23 +213,6 @@ private extension MessageBubbleView {
         }
     }
     
-    private var assistantModelLabel: String? {
-        guard message.messageRole == .assistant,
-              let conversation = message.conversation,
-              let modelId = conversation.selectedModelId,
-              let model = chatModels.first(where: { $0.id == modelId })
-        else {
-            return nil
-        }
-        
-        let nickname = model.displayName ??
-            model.provider?.nickname ??
-            model.provider?.type.displayName ??
-            "模型"
-        
-        return "\(nickname) | \(model.modelName)"
-    }
-    
     private var shouldShowStreamingPlaceholder: Bool {
         message.isStreaming && message.content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
@@ -267,6 +227,11 @@ private extension MessageBubbleView {
     
     private var messageShadowYOffset: CGFloat {
         message.messageRole == .assistant ? 3 : 4
+    }
+    
+    private var bubbleMaxWidth: CGFloat? {
+        let screenWidth = UIScreen.main.bounds.width
+        return min(screenWidth * 0.78, 360)
     }
 }
 
