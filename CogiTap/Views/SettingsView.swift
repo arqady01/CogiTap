@@ -14,6 +14,26 @@ struct SettingsView: View {
         NavigationStack {
             List {
                 Section {
+                    NavigationLink(destination: AppearanceSettingsView()) {
+                        HStack(spacing: 12) {
+                            Image(systemName: "paintbrush.pointed")
+                                .font(.title3)
+                                .foregroundStyle(.teal)
+                                .frame(width: 32)
+                            
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("外观显示")
+                                    .font(.body)
+                                Text("自定义聊天界面样式")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                        .padding(.vertical, 4)
+                    }
+                }
+                
+                Section {
                     NavigationLink(destination: ModelProvidersView()) {
                         HStack(spacing: 12) {
                             Image(systemName: "server.rack")
