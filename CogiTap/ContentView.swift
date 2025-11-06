@@ -32,8 +32,7 @@ struct ContentView: View {
                 ChatTopBar(
                     conversation: currentConversation,
                     selectedModel: selectedModel,
-                    onMenuTap: { showSidebar = true },
-                    onSettingsTap: { showSettings = true }
+                    onMenuTap: { showSidebar = true }
                 )
                 .padding(.horizontal, 20)
                 .padding(.top, 12)
@@ -191,7 +190,6 @@ struct ChatTopBar: View {
     let conversation: Conversation?
     let selectedModel: ChatModel?
     let onMenuTap: () -> Void
-    let onSettingsTap: () -> Void
     
     var body: some View {
         ZStack {
@@ -203,10 +201,6 @@ struct ChatTopBar: View {
                 }
                 
                 Spacer()
-                
-                Button(action: onSettingsTap) {
-                    ProfileAvatar()
-                }
             }
             
             Text(conversation?.title ?? "新对话")
@@ -214,26 +208,6 @@ struct ChatTopBar: View {
                 .fontWeight(.semibold)
                 .foregroundStyle(.primary)
         }
-    }
-}
-
-struct ProfileAvatar: View {
-    var body: some View {
-        Circle()
-            .strokeBorder(AngularGradient(gradient: Gradient(colors: [
-                .red, .orange, .yellow, .green, .blue, .purple, .red
-            ]), center: .center), lineWidth: 3)
-            .frame(width: 44, height: 44)
-            .overlay(
-                Circle()
-                    .fill(Color(.systemGray6))
-                    .overlay(
-                        Image(systemName: "person.fill")
-                            .font(.system(size: 20))
-                            .foregroundStyle(.white)
-                    )
-                    .padding(4)
-            )
     }
 }
 
@@ -258,23 +232,21 @@ struct EmptyStateView: View {
 }
 
 struct MessageListView: View {
-    @Query private var messages: [Message]
+    @Bindable var conversation: Conversation
 
     init(conversation: Conversation) {
-        let id = conversation.id
-        _messages = Query(
-            filter: #Predicate<Message> { message in
-                message.conversation?.id == id
-            },
-            sort: [SortDescriptor(\Message.createdAt, order: .forward)]
-        )
+        self._conversation = Bindable(conversation)
+    }
+
+    private var messages: [Message] {
+        conversation.sortedMessages
     }
 
     var body: some View {
         ScrollViewReader { proxy in
             ScrollView {
                 LazyVStack(spacing: 16) {
-                    ForEach(messages) { message in
+                    ForEach(visibleMessages) { message in
                         MessageBubbleView(message: message)
                             .id(message.id)
                     }
@@ -284,7 +256,7 @@ struct MessageListView: View {
             .onChange(of: messages.count) { oldValue, newValue in
                 // 当消息数量变化时，立即滚动到底部
                 print("消息数量变化: \(oldValue) -> \(newValue)")
-                if let lastMessage = messages.last {
+                if let lastMessage = visibleMessages.last {
                     DispatchQueue.main.async {
                         withAnimation(.easeOut(duration: 0.3)) {
                             proxy.scrollTo(lastMessage.id, anchor: .bottom)
@@ -294,18 +266,24 @@ struct MessageListView: View {
             }
             .onChange(of: messages.last?.content) { oldValue, newValue in
                 // 当最后一条消息内容变化时（流式更新），也滚动到底部
-                if let lastMessage = messages.last, let content = newValue, !content.isEmpty {
+                if let lastMessage = visibleMessages.last, let content = newValue, !content.isEmpty {
                     proxy.scrollTo(lastMessage.id, anchor: .bottom)
                 }
             }
             .onAppear {
                 // 初始加载时滚动到底部
-                if let lastMessage = messages.last {
+                if let lastMessage = visibleMessages.last {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                         proxy.scrollTo(lastMessage.id, anchor: .bottom)
                     }
                 }
             }
+        }
+    }
+
+    private var visibleMessages: [Message] {
+        messages.filter { message in
+            message.messageRole != .tool && message.messageRole != .system
         }
     }
 }

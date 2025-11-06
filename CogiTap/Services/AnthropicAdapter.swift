@@ -68,14 +68,26 @@ class AnthropicAdapter: BaseAPIAdapter {
         case "content_block_delta":
             if let delta = json["delta"] as? [String: Any],
                let text = delta["text"] as? String {
-                return StreamChunk(content: text, reasoningContent: nil, isFinished: false)
+                return StreamChunk(
+                    content: text,
+                    reasoningContent: nil,
+                    toolCallDeltas: nil,
+                    finishReason: nil,
+                    isFinished: false
+                )
             }
         case "message_stop":
-            return StreamChunk(content: nil, reasoningContent: nil, isFinished: true)
+            return StreamChunk(
+                content: nil,
+                reasoningContent: nil,
+                toolCallDeltas: nil,
+                finishReason: nil,
+                isFinished: true
+            )
         default:
             break
         }
-        
+
         return nil
     }
     
@@ -92,7 +104,8 @@ class AnthropicAdapter: BaseAPIAdapter {
         return UnifiedChatResponse(
             content: text,
             reasoningContent: nil,
-            finishReason: finishReason
+            finishReason: finishReason,
+            toolCalls: []
         )
     }
     

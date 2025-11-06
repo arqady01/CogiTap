@@ -16,6 +16,8 @@ struct CogiTapApp: App {
             ChatModel.self,
             Conversation.self,
             Message.self,
+            MemoryRecord.self,
+            MemoryConfig.self,
         ])
         
         // 使用轻量级迁移策略

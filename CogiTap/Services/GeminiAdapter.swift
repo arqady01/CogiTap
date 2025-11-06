@@ -80,6 +80,8 @@ class GeminiAdapter: BaseAPIAdapter {
         return StreamChunk(
             content: text,
             reasoningContent: nil,
+            toolCallDeltas: nil,
+            finishReason: finishReason,
             isFinished: finishReason != nil
         )
     }
@@ -100,7 +102,8 @@ class GeminiAdapter: BaseAPIAdapter {
         return UnifiedChatResponse(
             content: text,
             reasoningContent: nil,
-            finishReason: finishReason
+            finishReason: finishReason,
+            toolCalls: []
         )
     }
     

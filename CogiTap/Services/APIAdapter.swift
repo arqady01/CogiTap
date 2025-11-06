@@ -11,6 +11,31 @@ import Foundation
 struct UnifiedMessage: Codable {
     let role: String
     let content: String
+    let toolCalls: [UnifiedToolCall]?
+    let toolCallId: String?
+}
+
+extension UnifiedMessage {
+    init(role: String, content: String) {
+        self.role = role
+        self.content = content
+        self.toolCalls = nil
+        self.toolCallId = nil
+    }
+    
+    init(role: String, content: String, toolCalls: [UnifiedToolCall]?) {
+        self.role = role
+        self.content = content
+        self.toolCalls = toolCalls
+        self.toolCallId = nil
+    }
+    
+    init(role: String, content: String, toolCallId: String?) {
+        self.role = role
+        self.content = content
+        self.toolCalls = nil
+        self.toolCallId = toolCallId
+    }
 }
 
 // 统一的聊天请求
@@ -19,6 +44,8 @@ struct UnifiedChatRequest {
     let temperature: Double
     let stream: Bool
     let model: String
+    let functionTools: [FunctionTool]
+    let toolChoice: ToolChoice
 }
 
 // 统一的聊天响应
@@ -26,13 +53,40 @@ struct UnifiedChatResponse {
     let content: String
     let reasoningContent: String?
     let finishReason: String?
+    let toolCalls: [UnifiedToolCall]
 }
 
 // 流式响应的数据块
 struct StreamChunk {
     let content: String?
     let reasoningContent: String?
+    let toolCallDeltas: [ToolCallDelta]?
+    let finishReason: String?
     let isFinished: Bool
+}
+
+struct UnifiedToolCall: Codable {
+    let id: String
+    let name: String
+    let arguments: String
+}
+
+struct ToolCallDelta {
+    let id: String?
+    let name: String?
+    let arguments: String?
+    let index: Int?
+}
+
+struct FunctionTool {
+    let name: String
+    let description: String
+    let parameters: [String: Any]
+}
+
+enum ToolChoice {
+    case auto
+    case none
 }
 
 // API适配器协议

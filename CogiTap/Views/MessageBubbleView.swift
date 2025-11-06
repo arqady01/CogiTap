@@ -39,10 +39,15 @@ struct MessageBubbleView: View {
     
     var body: some View {
         Group {
-            if message.messageRole == .assistant {
+            switch message.messageRole {
+            case .assistant:
                 assistantLayout
-            } else {
+            case .user:
                 userLayout
+            case .system:
+                systemLayout
+            case .tool:
+                toolLayout
             }
         }
         .padding(.horizontal)
@@ -64,6 +69,32 @@ private extension MessageBubbleView {
             
             bubbleContent(alignment: .trailing)
         }
+    }
+    
+    var systemLayout: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            bubbleContent(alignment: .leading)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .opacity(0.85)
+    }
+    
+    var toolLayout: some View {
+        HStack(alignment: .center, spacing: 8) {
+            Image(systemName: "wrench.and.screwdriver")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            Text(message.content.isEmpty ? "工具执行完成" : message.content)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+        }
+        .padding(10)
+        .frame(maxWidth: .infinity, alignment: .center)
+        .background(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(Color(.secondarySystemBackground))
+        )
     }
     
     @ViewBuilder
@@ -184,6 +215,8 @@ private extension MessageBubbleView {
         case .assistant:
             return Color(.systemGray6)
         case .system:
+            return Color(.secondarySystemBackground)
+        case .tool:
             return Color(.systemGray6)
         }
     }
@@ -192,7 +225,7 @@ private extension MessageBubbleView {
         switch message.messageRole {
         case .user:
             return userBubbleOption.needsBorder ? userBubbleOption.borderColor : .clear
-        case .assistant, .system:
+        case .assistant, .system, .tool:
             return Color.clear
         }
     }
@@ -201,7 +234,7 @@ private extension MessageBubbleView {
         switch message.messageRole {
         case .user:
             return userBubbleOption.needsBorder ? 1 : 0
-        case .assistant, .system:
+        case .assistant, .system, .tool:
             return 0
         }
     }
@@ -212,6 +245,8 @@ private extension MessageBubbleView {
             return userBubbleOption.textColor
         case .assistant, .system:
             return .primary
+        case .tool:
+            return .secondary
         }
     }
     
@@ -221,6 +256,8 @@ private extension MessageBubbleView {
             return userBubbleOption.textColor
         case .assistant, .system:
             return Color.secondary
+        case .tool:
+            return Color.secondary
         }
     }
     
@@ -228,7 +265,7 @@ private extension MessageBubbleView {
         switch message.messageRole {
         case .user:
             return userBubbleOption.fillColor
-        case .assistant, .system:
+        case .assistant, .system, .tool:
             return Color.blue
         }
     }
@@ -260,6 +297,8 @@ private extension MessageBubbleView {
             return userFontOption.userMessageSize
         case .assistant, .system:
             return assistantFontOption.assistantMessageSize
+        case .tool:
+            return max(assistantFontOption.assistantMessageSize - 2, 11)
         }
     }
     

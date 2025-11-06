@@ -31,6 +31,24 @@ struct SettingsView: View {
                         }
                         .padding(.vertical, 4)
                     }
+                    
+                    NavigationLink(destination: MemoryManagementView()) {
+                        HStack(spacing: 12) {
+                            Image(systemName: "memorychip")
+                                .font(.title3)
+                                .foregroundStyle(.orange)
+                                .frame(width: 32)
+                            
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("记忆管理")
+                                    .font(.body)
+                                Text("查看、编辑及清理长期记忆")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                        .padding(.vertical, 4)
+                    }
                 }
                 
                 Section {
