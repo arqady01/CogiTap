@@ -35,7 +35,7 @@ struct ContentView: View {
                     onMenuTap: { showSidebar = true }
                 )
                 .padding(.horizontal, 20)
-                .padding(.top, 4)
+                .padding(.bottom, 10)
                 
                 // 消息列表
                 if let conversation = currentConversation {
