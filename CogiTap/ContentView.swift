@@ -299,10 +299,22 @@ struct ChatInputBar: View {
     let onSettingsTap: () -> Void
     @AppStorage(AppearanceStorageKey.userMessageFont)
     private var userFontName: String = ChatFontSizeOption.default.rawValue
+    @AppStorage(AppearanceStorageKey.userBubbleColor)
+    private var userBubbleColorName: String = ChatBubbleColorOption.default.rawValue
     
     private var userFontOption: ChatFontSizeOption {
         ChatFontSizeOption(rawValue: userFontName) ?? .default
     }
+
+    private var userBubbleOption: ChatBubbleColorOption {
+        ChatBubbleColorOption(rawValue: userBubbleColorName) ?? .default
+    }
+
+    private var sendButtonColor: Color {
+        userBubbleOption.accentButtonColor
+    }
+
+    private let stopButtonColor = Color(red: 0.85, green: 0.2, blue: 0.35)
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -356,27 +368,28 @@ struct ChatInputBar: View {
                 
                 if isStreaming {
                     Button(action: onStopGeneration) {
-                        Circle()
-                            .fill(Color.red)
-                            .frame(width: 38, height: 38)
-                            .overlay(
-                                Image(systemName: "stop.fill")
-                                    .font(.system(size: 16, weight: .semibold))
-                                    .foregroundStyle(.white)
-                            )
+                        ZStack {
+                            glassCircle(baseColor: stopButtonColor)
+                            RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                .fill(Color.white)
+                                .frame(width: 18, height: 18)
+                                .shadow(color: Color.white.opacity(0.45), radius: 6, x: 0, y: 2)
+                        }
+                        .frame(width: 38, height: 38)
                     }
                 } else {
                     Button(action: onSend) {
-                        Circle()
-                            .stroke(Color(.systemGray4), lineWidth: 1)
-                            .frame(width: 38, height: 38)
-                            .overlay(
-                                Image(systemName: "sparkles")
-                                    .font(.system(size: 16, weight: .semibold))
-                                    .foregroundStyle(.primary)
-                            )
+                        ZStack {
+                            glassCircle(baseColor: sendButtonColor)
+                            Image(systemName: "arrow.up")
+                                .font(.system(size: 18, weight: .heavy))
+                                .foregroundStyle(.white)
+                                .shadow(color: Color.white.opacity(0.5), radius: 6, x: 0, y: 2)
+                        }
+                        .frame(width: 38, height: 38)
                     }
                     .disabled(inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    .opacity(inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? 0.4 : 1)
                 }
             }
         }
@@ -395,6 +408,39 @@ struct ChatInputBar: View {
                     .offset(y: 0)
             }
         )
+    }
+
+    @ViewBuilder
+    private func glassCircle(baseColor: Color) -> some View {
+        ZStack {
+            Circle()
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            baseColor.opacity(0.92),
+                            baseColor.opacity(0.6)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+            
+            Circle()
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            Color.white.opacity(0.9),
+                            Color.white.opacity(0.05)
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+                .scaleEffect(0.5)
+                .blur(radius: 3)
+            
+
+        }
     }
 }
 

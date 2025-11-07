@@ -90,6 +90,29 @@ enum ChatBubbleColorOption: String, CaseIterable, Identifiable {
             return false
         }
     }
+
+    var accentButtonColor: Color {
+        switch self {
+        case .white:
+            return Color(red: 90 / 255, green: 134 / 255, blue: 255 / 255)
+        case .blue:
+            return Color(red: 54 / 255, green: 107 / 255, blue: 250 / 255)
+        case .cyan:
+            return Color(red: 24 / 255, green: 156 / 255, blue: 220 / 255)
+        case .yellow:
+            return Color(red: 255 / 255, green: 170 / 255, blue: 56 / 255)
+        case .green:
+            return Color(red: 12 / 255, green: 134 / 255, blue: 92 / 255)
+        case .pink:
+            return Color(red: 216 / 255, green: 56 / 255, blue: 136 / 255)
+        case .red:
+            return Color(red: 196 / 255, green: 38 / 255, blue: 67 / 255)
+        case .orange:
+            return Color(red: 226 / 255, green: 98 / 255, blue: 30 / 255)
+        case .purple:
+            return Color(red: 143 / 255, green: 73 / 255, blue: 215 / 255)
+        }
+    }
     
     static var `default`: ChatBubbleColorOption { .blue }
 }
