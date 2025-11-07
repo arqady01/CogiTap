@@ -195,12 +195,23 @@ struct ChatTopBar: View {
         ZStack {
             HStack {
                 Button(action: onMenuTap) {
-                    Image(systemName: "line.3.horizontal")
+                    Image(systemName: "list.bullet")
                         .font(.system(size: 22, weight: .medium))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.black)
                 }
                 
                 Spacer()
+
+                Button(action: {}) {
+                    Image(systemName: "text.line.2.summary")
+                        .font(.system(size: 22, weight: .medium))
+                        .foregroundStyle(.black)
+                }
+                Button(action: {}) {
+                    Image(systemName: "eraser.line.dashed")
+                        .font(.system(size: 22, weight: .medium))
+                        .foregroundStyle(.black)
+                }
             }
             
             Text(conversation?.title ?? "新对话")

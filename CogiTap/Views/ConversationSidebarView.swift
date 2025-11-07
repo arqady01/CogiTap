@@ -21,6 +21,8 @@ struct ConversationSidebarView: View {
     @State private var editingConversation: Conversation?
     @State private var newTitle = ""
     @State private var conversationForSettings: Conversation?
+    @State private var isBulkDeleteMode = false
+    @State private var pendingDeletionIDs = Set<UUID>()
     
     var body: some View {
         VStack(spacing: 0) {
@@ -39,8 +41,10 @@ struct ConversationSidebarView: View {
                         .font(.title3)
                         .foregroundStyle(.blue)
                 }
+                .disabled(isBulkDeleteMode)
                 
                 Button {
+                    exitBulkDeleteMode()
                     isPresented = false
                 } label: {
                     Image(systemName: "xmark.circle.fill")
@@ -50,13 +54,15 @@ struct ConversationSidebarView: View {
             }
             .padding()
             
-            // 会话列表
-            ScrollView {
+        // 会话列表
+        ScrollView {
                 LazyVStack(spacing: 8) {
                     ForEach(conversations) { conversation in
                         ConversationRow(
                             conversation: conversation,
                             isSelected: selectedConversation?.id == conversation.id,
+                            isDeleteMode: isBulkDeleteMode,
+                            isSelectedForDeletion: pendingDeletionIDs.contains(conversation.id),
                             onTap: {
                                 selectedConversation = conversation
                                 isPresented = false
@@ -71,6 +77,9 @@ struct ConversationSidebarView: View {
                             },
                             onSettings: {
                                 conversationForSettings = conversation
+                            },
+                            onSelectionToggle: {
+                                toggleSelection(for: conversation)
                             }
                         )
                     }
@@ -85,23 +94,29 @@ struct ConversationSidebarView: View {
                 SidebarButton(icon: "square.and.pencil") {
                     // 占位按钮
                 }
+                .disabled(isBulkDeleteMode)
                 
                 SidebarButton(icon: "folder") {
                     // 占位按钮
                 }
+                .disabled(isBulkDeleteMode)
                 
                 SidebarButton(icon: "archivebox") {
                     // 占位按钮
                 }
+                .disabled(isBulkDeleteMode)
                 
-                SidebarButton(icon: "trash") {
-                    // 占位按钮
+                SidebarButton(icon: deleteButtonIcon) {
+                    // 开始批量删除
+                    handleDeleteButtonTap()
                 }
                 
                 SidebarButton(icon: "gearshape.fill") {
+                    exitBulkDeleteMode()
                     showSettings = true
                     isPresented = false
                 }
+                .disabled(isBulkDeleteMode)
             }
             .padding()
             .background(Color(.systemBackground))
@@ -113,6 +128,7 @@ struct ConversationSidebarView: View {
             Button("删除", role: .destructive) {
                 if let conversation = conversationToDelete {
                     deleteConversation(conversation)
+                    try? modelContext.save()
                 }
             }
         } message: {
@@ -150,6 +166,38 @@ struct ConversationSidebarView: View {
         }
     }
     
+    private func toggleSelection(for conversation: Conversation) {
+        if pendingDeletionIDs.contains(conversation.id) {
+            pendingDeletionIDs.remove(conversation.id)
+        } else {
+            pendingDeletionIDs.insert(conversation.id)
+        }
+    }
+    
+    private func handleDeleteButtonTap() {
+        if isBulkDeleteMode {
+            guard !pendingDeletionIDs.isEmpty else {
+                exitBulkDeleteMode()
+                return
+            }
+            confirmBulkDeletion()
+        } else {
+            isBulkDeleteMode = true
+        }
+    }
+    
+    private func confirmBulkDeletion() {
+        let targets = conversations.filter { pendingDeletionIDs.contains($0.id) }
+        targets.forEach { deleteConversation($0) }
+        try? modelContext.save()
+        exitBulkDeleteMode()
+    }
+    
+    private func exitBulkDeleteMode() {
+        isBulkDeleteMode = false
+        pendingDeletionIDs.removeAll()
+    }
+    
     private func createNewConversation() {
         let newConversation = Conversation()
         modelContext.insert(newConversation)
@@ -157,21 +205,35 @@ struct ConversationSidebarView: View {
         isPresented = false
         try? modelContext.save()
     }
+    
+    private var deleteButtonIcon: String {
+        if isBulkDeleteMode && !pendingDeletionIDs.isEmpty {
+            return "checkmark.circle.fill"
+        }
+        return "trash"
+    }
 }
 
 struct ConversationRow: View {
     let conversation: Conversation
     let isSelected: Bool
+    let isDeleteMode: Bool
+    let isSelectedForDeletion: Bool
     let onTap: () -> Void
     let onEdit: () -> Void
     let onDelete: () -> Void
     let onSettings: () -> Void
+    let onSelectionToggle: () -> Void
     
     @State private var showingActions = false
     
     var body: some View {
         Button {
-            onTap()
+            if isDeleteMode {
+                onSelectionToggle()
+            } else {
+                onTap()
+            }
         } label: {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
@@ -190,18 +252,24 @@ struct ConversationRow: View {
                 
                 Spacer()
                 
-                Button {
-                    showingActions = true
-                } label: {
-                    Image(systemName: "square.and.pencil")
-                        .foregroundStyle(.secondary)
+                if isDeleteMode {
+                    Image(systemName: isSelectedForDeletion ? "checkmark.circle.fill" : "circle")
+                        .font(.title3)
+                        .foregroundStyle(isSelectedForDeletion ? .red : .secondary)
+                } else {
+                    Button {
+                        showingActions = true
+                    } label: {
+                        Image(systemName: "square.and.pencil")
+                            .foregroundStyle(.secondary)
+                    }
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
             }
             .padding()
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(isSelected ? Color.blue.opacity(0.1) : Color(.systemBackground))
+                    .fill(rowBackgroundColor)
             )
         }
         .buttonStyle(.plain)
@@ -217,6 +285,13 @@ struct ConversationRow: View {
             }
             Button("取消", role: .cancel) {}
         }
+    }
+    
+    private var rowBackgroundColor: Color {
+        if isSelectedForDeletion {
+            return Color.red.opacity(0.08)
+        }
+        return isSelected ? Color.blue.opacity(0.1) : Color(.systemBackground)
     }
 }
 
