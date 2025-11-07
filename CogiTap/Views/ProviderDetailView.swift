@@ -50,11 +50,6 @@ struct ProviderDetailView: View {
                         .autocorrectionDisabled()
                         .textInputAutocapitalization(.never)
                     
-                    LabeledContent("类型") {
-                        Text(provider.type.displayName)
-                            .foregroundStyle(.secondary)
-                    }
-                    
                     if provider.type == .custom {
                         TextField("Base URL", text: $editedBaseURL)
                             .autocapitalization(.none)
@@ -69,9 +64,22 @@ struct ProviderDetailView: View {
                     }
                 } else {
                     LabeledContent("昵称", value: provider.nickname)
-                    LabeledContent("类型", value: provider.type.displayName)
                     LabeledContent("Base URL", value: provider.baseURL)
                 }
+            }
+            
+            if provider.type == .custom {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("最终模型交互 Endpoint")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    Text(finalInteractionEndpoint)
+                        .font(.footnote)
+                        .fontWeight(.medium)
+                        .textSelection(.enabled)
+                        .foregroundStyle(.primary)
+                }
+                .padding(.vertical, 6)
             }
             
             Section("API密钥") {
@@ -271,6 +279,28 @@ struct ProviderDetailView: View {
     
     private var currentAPIKey: String {
         isEditing ? editedAPIKey : provider.apiKey
+    }
+    
+    private var finalInteractionEndpoint: String {
+        guard provider.type == .custom else {
+            return provider.getFinalBaseURL()
+        }
+        
+        let base = isEditing ? editedBaseURL : provider.baseURL
+        let trimmed = base.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else {
+            return "请先填写 Base URL"
+        }
+        
+        if trimmed.hasSuffix("#") {
+            return String(trimmed.dropLast())
+        }
+        
+        if trimmed.hasSuffix("/") {
+            return trimmed + "chat/completions"
+        }
+        
+        return trimmed + "/v1/chat/completions"
     }
     
     private var maskedCurrentAPIKey: String {
