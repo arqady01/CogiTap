@@ -35,7 +35,7 @@ struct ContentView: View {
                     onMenuTap: { showSidebar = true }
                 )
                 .padding(.horizontal, 20)
-                .padding(.top, 12)
+                .padding(.top, 4)
                 
                 // 消息列表
                 if let conversation = currentConversation {
@@ -321,21 +321,21 @@ struct ChatInputBar: View {
                     .focused($isKeyboardFocused)
                     .scrollContentBackground(.hidden)
                     .background(Color.clear)
-                    .frame(minHeight: 20, maxHeight: 100)
+                    .frame(minHeight: -10, maxHeight: 70)
             }
             
             HStack(spacing: 10) {
                 Button(action: {}) {
                     Image(systemName: "plus")
                         .font(.system(size: 18, weight: .medium))
-                        .foregroundStyle(.primary)
+                        .foregroundStyle(.black)
                         .frame(width: 32, height: 32)
                 }
                 
                 Button(action: onSettingsTap) {
                     Image(systemName: "slider.horizontal.3")
                         .font(.system(size: 18, weight: .medium))
-                        .foregroundStyle(.primary)
+                        .foregroundStyle(.black)
                         .frame(width: 32, height: 32)
                 }
                 
@@ -351,7 +351,7 @@ struct ChatInputBar: View {
                             Capsule(style: .continuous)
                                 .stroke(Color(.systemGray4), lineWidth: 1)
                         )
-                        .foregroundStyle(.primary)
+                        .foregroundStyle(.black)
                 }
                 
                 if isStreaming {
