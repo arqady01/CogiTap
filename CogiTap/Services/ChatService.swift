@@ -483,14 +483,23 @@ final class ChatService: ObservableObject {
         for conversation: Conversation,
         modelContext: ModelContext
     ) -> [Message] {
+        let cutoffDate = conversation.contextResetAt
         if let loaded = conversation.messages {
-            return loaded.sorted { $0.createdAt < $1.createdAt }
+            return filterMessages(loaded.sorted { $0.createdAt < $1.createdAt }, cutoffDate: cutoffDate)
         }
         let descriptor = FetchDescriptor<Message>()
         let fetched = (try? modelContext.fetch(descriptor)) ?? []
-        return fetched
+        return filterMessages(
+            fetched
             .filter { $0.conversation?.id == conversation.id }
-            .sorted { $0.createdAt < $1.createdAt }
+            .sorted { $0.createdAt < $1.createdAt },
+            cutoffDate: cutoffDate
+        )
+    }
+    
+    private func filterMessages(_ messages: [Message], cutoffDate: Date?) -> [Message] {
+        guard let cutoffDate else { return messages }
+        return messages.filter { $0.createdAt >= cutoffDate }
     }
     
     private func providerSupportsTools(_ provider: APIProvider) -> Bool {

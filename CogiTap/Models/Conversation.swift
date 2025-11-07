@@ -23,6 +23,9 @@ final class Conversation {
     // 当前使用的模型
     var selectedModelId: UUID?
     
+    // 最后一次清理上下文的时间戳，用于决定哪些消息参与上下文
+    var contextResetAt: Date?
+    
     // 关联的消息列表
     @Relationship(deleteRule: .cascade, inverse: \Message.conversation)
     var messages: [Message]?
@@ -35,7 +38,8 @@ final class Conversation {
         temperature: Double = 0.7,
         systemPrompt: String = "You are a helpful assistant.",
         isStreamingEnabled: Bool = true,
-        selectedModelId: UUID? = nil
+        selectedModelId: UUID? = nil,
+        contextResetAt: Date? = nil
     ) {
         self.id = id
         self.title = title
@@ -45,6 +49,7 @@ final class Conversation {
         self.systemPrompt = systemPrompt
         self.isStreamingEnabled = isStreamingEnabled
         self.selectedModelId = selectedModelId
+        self.contextResetAt = contextResetAt
     }
     
     var sortedMessages: [Message] {

@@ -8,6 +8,18 @@
 import SwiftUI
 import SwiftData
 
+private enum ChatActionConfirmation: Identifiable {
+    case clearContext
+    case deleteMessages
+    
+    var id: String {
+        switch self {
+        case .clearContext: return "clearContext"
+        case .deleteMessages: return "deleteMessages"
+        }
+    }
+}
+
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \Conversation.updatedAt, order: .reverse) private var conversations: [Conversation]
@@ -22,6 +34,7 @@ struct ContentView: View {
     @State private var showModelSelector = false
     @State private var conversationSettingsTarget: Conversation?
     @State private var inputText = ""
+    @State private var pendingConfirmation: ChatActionConfirmation?
     @FocusState private var isKeyboardFocused: Bool
     
     var body: some View {
@@ -32,7 +45,9 @@ struct ContentView: View {
                 ChatTopBar(
                     conversation: currentConversation,
                     selectedModel: selectedModel,
-                    onMenuTap: { showSidebar = true }
+                    onMenuTap: { showSidebar = true },
+                    onClearContext: { pendingConfirmation = .clearContext },
+                    onDeleteMessages: { pendingConfirmation = .deleteMessages }
                 )
                 .padding(.horizontal, 20)
                 .padding(.bottom, 10)
@@ -99,6 +114,24 @@ struct ContentView: View {
         .sheet(item: $conversationSettingsTarget) { conversation in
             ConversationSettingsView(conversation: conversation)
                 .environment(\.modelContext, modelContext)
+        }
+        .alert(item: $pendingConfirmation) { action in
+            switch action {
+            case .clearContext:
+                return Alert(
+                    title: Text("清除上下文？"),
+                    message: Text("移除当前会话的上下文，但消息仍会保留。"),
+                    primaryButton: .destructive(Text("清除"), action: clearConversationContext),
+                    secondaryButton: .cancel()
+                )
+            case .deleteMessages:
+                return Alert(
+                    title: Text("删除聊天记录？"),
+                    message: Text("彻底删除所有消息，操作不可撤销。"),
+                    primaryButton: .destructive(Text("删除"), action: deleteConversationHistory),
+                    secondaryButton: .cancel()
+                )
+            }
         }
         .onAppear {
             initializeApp()
@@ -182,6 +215,27 @@ struct ContentView: View {
             }
         }
     }
+    
+    private func clearConversationContext() {
+        guard let conversation = currentConversation else { return }
+        chatService.stopGeneration()
+        conversation.contextResetAt = Date()
+        conversation.updatedAt = Date()
+        try? modelContext.save()
+    }
+    
+    private func deleteConversationHistory() {
+        guard let conversation = currentConversation else { return }
+        chatService.stopGeneration()
+        if let messages = conversation.messages {
+            for message in messages {
+                modelContext.delete(message)
+            }
+        }
+        conversation.contextResetAt = nil
+        conversation.updatedAt = Date()
+        try? modelContext.save()
+    }
 }
 
 // MARK: - Chat Components
@@ -190,6 +244,8 @@ struct ChatTopBar: View {
     let conversation: Conversation?
     let selectedModel: ChatModel?
     let onMenuTap: () -> Void
+    let onClearContext: () -> Void
+    let onDeleteMessages: () -> Void
     
     var body: some View {
         ZStack {
@@ -202,16 +258,18 @@ struct ChatTopBar: View {
                 
                 Spacer()
 
-                Button(action: {}) {
+                Button(action: onClearContext) {
                     Image(systemName: "text.line.2.summary")
-                        .font(.system(size: 22, weight: .medium))
+                        .font(.system(size: 20, weight: .medium))
                         .foregroundStyle(.black)
                 }
-                Button(action: {}) {
+                .disabled(conversation == nil)
+                Button(action: onDeleteMessages) {
                     Image(systemName: "eraser.line.dashed")
-                        .font(.system(size: 22, weight: .medium))
+                        .font(.system(size: 20, weight: .medium))
                         .foregroundStyle(.black)
                 }
+                .disabled(conversation == nil)
             }
             
             Text(conversation?.title ?? "新对话")
