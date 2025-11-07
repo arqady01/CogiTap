@@ -393,9 +393,9 @@ struct ChatInputBar: View {
                 }
             }
         }
-        .padding(.top, 28)
+        .padding(.top, 12)
         .padding(.horizontal, 20)
-        .padding(.bottom, 10)
+        .padding(.bottom, 3)
         .background(
             GeometryReader { geometry in
                 UnevenRoundedRectangle(cornerRadii: .init(
@@ -436,7 +436,7 @@ struct ChatInputBar: View {
                         endPoint: .bottom
                     )
                 )
-                .scaleEffect(0.5)
+                .scaleEffect(0.55)
                 .blur(radius: 3)
             
 
