@@ -18,6 +18,9 @@ struct CogiTapApp: App {
             Message.self,
             MemoryRecord.self,
             MemoryConfig.self,
+            MCPServer.self,
+            MCPTool.self,
+            ConversationMCPSelection.self,
         ])
         
         // 使用轻量级迁移策略

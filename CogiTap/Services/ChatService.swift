@@ -19,7 +19,9 @@ final class ChatService: ObservableObject {
     }
     
     private let memoryService = MemoryService.shared
+    private let mcpManager = MCPManager.shared
     private var streamTask: Task<Void, Never>?
+    private var mcpRegistry = MCPToolRegistry()
     
     // MARK: - Public API
     
@@ -326,35 +328,44 @@ final class ChatService: ObservableObject {
         assistantPlaceholder: Message,
         modelContext: ModelContext
     ) async throws {
-        guard let firstCall = toolCalls.first else { return }
+        guard !toolCalls.isEmpty else { return }
         
-        let assistantCallMessage = Message(
-            role: .assistant,
-            content: "",
-            toolCallId: firstCall.id,
-            toolCallName: firstCall.name,
-            toolCallArguments: firstCall.arguments,
-            conversation: conversation
-        )
-        modelContext.insert(assistantCallMessage)
+        for call in toolCalls {
+            let assistantCallMessage = Message(
+                role: .assistant,
+                content: "",
+                toolCallId: call.id,
+                toolCallName: call.name,
+                toolCallArguments: call.arguments,
+                conversation: conversation
+            )
+            modelContext.insert(assistantCallMessage)
+            
+            let toolResult: String
+            if MemoryToolName(rawValue: call.name) != nil {
+                toolResult = executeMemoryTool(
+                    name: call.name,
+                    argumentsJSON: call.arguments,
+                    conversation: conversation,
+                    modelContext: modelContext
+                )
+            } else {
+                toolResult = await executeRemoteTool(
+                    toolName: call.name,
+                    argumentsJSON: call.arguments
+                )
+            }
+            
+            let toolMessage = Message(
+                role: .tool,
+                content: toolResult,
+                toolCallId: call.id,
+                conversation: conversation
+            )
+            modelContext.insert(toolMessage)
+            try? modelContext.save()
+        }
         
-        let toolResult = executeMemoryTool(
-            name: firstCall.name,
-            argumentsJSON: firstCall.arguments,
-            conversation: conversation,
-            modelContext: modelContext
-        )
-        
-        let toolMessage = Message(
-            role: .tool,
-            content: toolResult,
-            toolCallId: firstCall.id,
-            conversation: conversation
-        )
-        modelContext.insert(toolMessage)
-        try? modelContext.save()
-        
-        // After tool execution, send a follow-up request to get final answer
         assistantPlaceholder.isStreaming = true
         try? modelContext.save()
     }
@@ -404,6 +415,24 @@ final class ChatService: ObservableObject {
         }
     }
     
+    private func executeRemoteTool(
+        toolName: String,
+        argumentsJSON: String
+    ) async -> String {
+        guard let registered = mcpRegistry.registeredTool(for: toolName) else {
+            return "未找到对应的 MCP 工具"
+        }
+        do {
+            let output = try await mcpManager.invokeTool(
+                identifier: registered.descriptor.identifier,
+                argumentsJSON: argumentsJSON
+            )
+            return output.isEmpty ? "MCP 工具执行完成" : output
+        } catch {
+            return "MCP 工具调用失败: \(error.localizedDescription)"
+        }
+    }
+    
     // MARK: - Request builder
     
     private func makeChatRequest(
@@ -445,11 +474,25 @@ final class ChatService: ObservableObject {
         
         messages.append(contentsOf: historyMessages.map(convertMessage))
         
-        let functionConfig: (tools: [FunctionTool], choice: ToolChoice)
+        var functionTools: [FunctionTool] = []
+        var toolChoice: ToolChoice = .none
         if let provider = model.provider, providerSupportsTools(provider) {
-            functionConfig = MemoryToolBuilder.makeTools(using: config)
+            let memoryResult = MemoryToolBuilder.makeTools(using: config)
+            functionTools = memoryResult.tools
+            toolChoice = memoryResult.choice
+            
+            let remoteTools = mcpRegistry.install(
+                remote: mcpManager.registeredTools(for: conversation)
+            )
+            functionTools.append(contentsOf: remoteTools)
+            if !remoteTools.isEmpty {
+                toolChoice = .auto
+            }
+            if functionTools.isEmpty {
+                toolChoice = .none
+            }
         } else {
-            functionConfig = ([], .none)
+            _ = mcpRegistry.install(remote: [])
         }
         
         return UnifiedChatRequest(
@@ -457,8 +500,8 @@ final class ChatService: ObservableObject {
             temperature: conversation.temperature,
             stream: conversation.isStreamingEnabled,
             model: model.modelName,
-            functionTools: functionConfig.tools,
-            toolChoice: functionConfig.choice
+            functionTools: functionTools,
+            toolChoice: toolChoice
         )
     }
     
@@ -512,6 +555,9 @@ final class ChatService: ObservableObject {
     }
     
     private func statusText(for toolName: String) -> String {
+        if toolName.hasPrefix("mcp::") {
+            return "正在调用 MCP 工具..."
+        }
         switch MemoryToolName(rawValue: toolName) {
         case .saveMemory:
             return "正在记忆..."

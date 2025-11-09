@@ -30,6 +30,10 @@ final class Conversation {
     @Relationship(deleteRule: .cascade, inverse: \Message.conversation)
     var messages: [Message]?
     
+    // 关联的 MCP 服务器选择
+    @Relationship(deleteRule: .cascade, inverse: \ConversationMCPSelection.conversation)
+    var mcpSelections: [ConversationMCPSelection]?
+    
     init(
         id: UUID = UUID(),
         title: String = "新对话",
@@ -39,7 +43,8 @@ final class Conversation {
         systemPrompt: String = "You are a helpful assistant.",
         isStreamingEnabled: Bool = true,
         selectedModelId: UUID? = nil,
-        contextResetAt: Date? = nil
+        contextResetAt: Date? = nil,
+        mcpSelections: [ConversationMCPSelection]? = nil
     ) {
         self.id = id
         self.title = title
@@ -50,6 +55,7 @@ final class Conversation {
         self.isStreamingEnabled = isStreamingEnabled
         self.selectedModelId = selectedModelId
         self.contextResetAt = contextResetAt
+        self.mcpSelections = mcpSelections
     }
     
     var sortedMessages: [Message] {

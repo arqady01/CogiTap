@@ -70,6 +70,24 @@ struct SettingsView: View {
                         .padding(.vertical, 4)
                     }
                     
+                    NavigationLink(destination: MCPServerListView()) {
+                        HStack(spacing: 12) {
+                            Image(systemName: "puzzlepiece.extension")
+                                .font(.title3)
+                                .foregroundStyle(.green)
+                                .frame(width: 32)
+                            
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("MCP 工具")
+                                    .font(.body)
+                                Text("配置 MCP 服务器与工具")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                        .padding(.vertical, 4)
+                    }
+                    
                     NavigationLink(destination: AboutView()) {
                         HStack(spacing: 12) {
                             Image(systemName: "info.circle")

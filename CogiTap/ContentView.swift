@@ -26,6 +26,7 @@ struct ContentView: View {
     @Query private var allModels: [ChatModel]
     
     @StateObject private var chatService = ChatService()
+    @ObservedObject private var mcpManager = MCPManager.shared
     
     @State private var currentConversation: Conversation?
     @State private var selectedModel: ChatModel?
@@ -73,6 +74,7 @@ struct ContentView: View {
                     isKeyboardFocused: $isKeyboardFocused,
                     selectedModel: selectedModel,
                     isStreaming: chatService.isStreaming,
+                    mcpStatusText: summarizeMCPStatus(for: currentConversation),
                     onSend: sendMessage,
                     onStopGeneration: { chatService.stopGeneration() },
                     onModelTap: { showModelSelector = true },
@@ -163,6 +165,8 @@ struct ContentView: View {
         if selectedModel == nil {
             selectedModel = allModels.first { $0.isEnabled }
         }
+        
+        mcpManager.refreshServers(using: modelContext)
     }
     
     private func sendMessage() {
@@ -235,6 +239,38 @@ struct ContentView: View {
         conversation.contextResetAt = nil
         conversation.updatedAt = Date()
         try? modelContext.save()
+    }
+    
+    private func summarizeMCPStatus(for conversation: Conversation?) -> String {
+        guard let conversation, let selections = conversation.mcpSelections, !selections.isEmpty else {
+            return "MCP 未启用"
+        }
+        var connectedCount = 0
+        var connectingCount = 0
+        var errorCount = 0
+        for selection in selections {
+            guard let server = selection.server else { continue }
+            switch mcpManager.connectionStatus(for: server.id) {
+            case .connected:
+                connectedCount += 1
+            case .connecting:
+                connectingCount += 1
+            case .error:
+                errorCount += 1
+            case .idle:
+                break
+            }
+        }
+        if errorCount > 0 {
+            return "MCP · 错误 \(errorCount)"
+        }
+        if connectingCount > 0 {
+            return "MCP · 连接中"
+        }
+        if connectedCount > 0 {
+            return "MCP · 已连接 \(connectedCount)"
+        }
+        return "MCP · 已配置"
     }
 }
 
@@ -362,6 +398,7 @@ struct ChatInputBar: View {
     @FocusState.Binding var isKeyboardFocused: Bool
     let selectedModel: ChatModel?
     let isStreaming: Bool
+    let mcpStatusText: String
     let onSend: () -> Void
     let onStopGeneration: () -> Void
     let onModelTap: () -> Void
@@ -404,6 +441,14 @@ struct ChatInputBar: View {
                     .background(Color.clear)
                     .frame(minHeight: -10, maxHeight: 70)
             }
+            
+            HStack {
+                Label(mcpStatusText, systemImage: "puzzlepiece.extension")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                Spacer()
+            }
+            .padding(.leading, 4)
             
             HStack(spacing: 10) {
                 Button(action: {}) {

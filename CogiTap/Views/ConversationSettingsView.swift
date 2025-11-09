@@ -62,6 +62,23 @@ struct ConversationSettingsView: View {
                 } footer: {
                     Text("设置AI助手的行为和角色")
                 }
+                
+                Section {
+                    NavigationLink {
+                        ConversationMCPSelectorView(conversation: conversation)
+                            .environment(\.modelContext, modelContext)
+                    } label: {
+                        HStack {
+                            Text("MCP 工具")
+                            Spacer()
+                            Text(mcpSummary)
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                } footer: {
+                    Text("选择本会话可以使用的 MCP 服务器。")
+                }
             }
             .navigationTitle("对话设置")
             .navigationBarTitleDisplayMode(.inline)
@@ -82,6 +99,17 @@ struct ConversationSettingsView: View {
                 }
             }
         }
+    }
+    
+    private var mcpSummary: String {
+        guard let selections = conversation.mcpSelections, !selections.isEmpty else {
+            return "未启用"
+        }
+        let enabledCount = selections.filter { $0.server?.isEnabled ?? false }.count
+        if enabledCount == 0 {
+            return "未启用"
+        }
+        return "已选择 \(enabledCount) 个"
     }
 }
 
